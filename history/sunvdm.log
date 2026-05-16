@@ -1,0 +1,50 @@
+sunshine params: 2420x1668@60 hdr=on
+setting up virtual display 2420x1668@60 hdr on
+disabling Display
+disabling Display
+disabling Display
+disabling Display
+disabling Display
+disabling Display
+disabling Display
+disabling Display
+disabling Display
+disabling Display
+disabling Display
+disabling Display
+disabling Display
+disabling Display
+disabling Display
+disabling Display
+disabling Display
+disabling Display
+disabling Display
+disabling Display
+disabling Display
+disabling Display
+disabling Display
+disabling Display
+disabling Display
+disabling Display
+disabling Display
+disabling Display
+disabling Display
+disabling Display
+disabling Display
+disabling Display
+disabling Display
+disabling Display
+disabling Display
+disabling Display
+disabling Display
+disabling Display
+disabling Display
+disabling Display
+disabling Display
+failed to converge display topology safely
+At C:\jacks\AI\sunshine-virtual-monitor\setup_sunvdm.ps1:155 char:30
++ ... ries++ -ge 40) { Throw "failed to converge display topology safely" }
++                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (failed to conve...topology safely:String) [], RuntimeException
+    + FullyQualifiedErrorId : failed to converge display topology safely
+ 

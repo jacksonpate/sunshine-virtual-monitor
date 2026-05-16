@@ -1,0 +1,9 @@
+# download cache (232MB, redundant — driver/ already has the extracted signed driver)
+_dl/
+# runtime scratch produced by the scripts
+_*.csv
+_*.txt
+_prep_line.txt
+state.json
+display_state.json
+*.bak-*
