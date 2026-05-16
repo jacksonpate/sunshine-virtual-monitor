@@ -71,4 +71,38 @@ Get-Content 'C:\Program Files\Sunshine\config\sunshine.conf'
   see `fix7-ensure-only-elevated.ps1`.
 
 Scripts/history: `C:\jacks\AI\sunshine-virtual-monitor\` (fix1–fix12 + result logs).
+Portable reproducible repo: `C:\Users\jacks\Desktop\sunshine-virtual-monitor\` (git,
+branch main) + single-file `C:\Users\jacks\Desktop\sunshine-virtual-monitor.bundle`
+(`git clone` it on any PC → run `scripts\deploy-new-machine.ps1` elevated; it
+auto-derives that machine's per-host VDD device_id). Pushed to GitHub:
+`git@github.com:jacksonpate/sunshine-virtual-monitor` (branch main). NOTE: GitHub
+SSH from the Cygwin shell needs Windows OpenSSH + explicit key — repo has
+`core.sshCommand` set to `C:/Windows/System32/OpenSSH/ssh.exe -i
+C:/Users/jacks/.ssh/id_ed25519 -o IdentitiesOnly=yes -o IdentityAgent=none`.
+The private key ACL was tightened (icacls /inheritance:r, owner-only) so Windows
+OpenSSH stops rejecting it as "permissions too open".
 Sunshine 2025.924, signed VDD 25.7.23 (`Root\MttVDD`), SunshineService = LocalSystem.
+
+## Display roaming (grab-the-iPad-and-walk-away) — WORKING 2026-05-15
+
+`C:\jacks\AI\sunshine-virtual-monitor\roam\` — always-running watcher
+(`RoamDisplayWatcher` logon task, Interactive/Highest, survives reboot), zero commands:
+- **DOCKED:** physical panel on (primary) + VDD = extended 2nd monitor.
+- **AWAY:** physical panel off, VDD = whole desktop.
+
+Triggers (DEEP corner = jam the literal ~18px tip, hold 3s):
+- iPad **bottom-right** tip 3s → AWAY · iPad **bottom-left** tip 3s → DOCKED.
+- `Ctrl+Alt+Shift+D` → DOCKED failsafe · stream drops while AWAY → auto DOCKED.
+- Auto-return on desk mouse/kbd was REMOVED (Moonlight input got misclassified as
+  local by the LL-hook injected flag and bounced AWAY back instantly).
+
+Files: `roam-lib.ps1` (proven CCD+MMT transition primitives), `roam-watcher.ps1`
+(LL input hooks + cursor poll + state machine; **DPI-aware** so GetCursorPos =
+physical px), `install-roam-watcher-elevated.ps1` (one-time register+start),
+`restart-watcher-elevated.ps1` (reload after edits). Log: `roam\roam.log`.
+
+Gotchas: VDD rect MUST come from MultiMonitorTool `Left-Top`/`Right-Bottom` matched
+by monitor name "VDD by MTT" — Forms.Screen device-name matching fails (VDD
+`\\.\DISPLAYn` renumbers every topology change; AWAY still enumerates 2 screens with
+the VDD as primary). `Session-Live` must scan the WHOLE sunshine.log (Sunshine writes
+~200 lines after CLIENT CONNECTED; a tail window misses it → false "no session").

@@ -105,3 +105,24 @@ debugging history. `history/` holds the run logs from the original build.
 | `config/` | the working `sunshine.conf` + `vdd_settings.xml` |
 | `runbook.md` | canonical operational runbook |
 | `history/` | result logs from the original build/debug session |
+| `scripts/roam/` | optional "grab-the-iPad-and-walk-away" display roaming watcher |
+
+## Optional: display roaming (grab the iPad and walk away)
+
+`scripts/roam/` adds a hands-free swap between **DOCKED** (host screen primary + VDD
+as 2nd monitor) and **AWAY** (host screen off, VDD = the whole desktop), with no
+commands:
+
+- iPad **bottom-right deep corner**, hold 3s → AWAY
+- iPad **bottom-left deep corner**, hold 3s → DOCKED
+- `Ctrl+Alt+Shift+D` failsafe; auto-DOCKED if the stream drops
+
+Install (elevated, one-time): `powershell -ExecutionPolicy Bypass -File
+scripts\roam\install-roam-watcher-elevated.ps1` — registers a logon scheduled task
+that runs the watcher in your session forever (survives reboot). Edit then reload via
+`restart-watcher-elevated.ps1`.
+
+> NOTE: the roam scripts expect this setup deployed at
+> `C:\jacks\AI\sunshine-virtual-monitor\` (where MultiMonitorTool lives). Adjust the
+> `$ROAM` path at the top of `roam-lib.ps1` if you deploy elsewhere. Watcher must be
+> DPI-aware (it is) so cursor coords match MultiMonitorTool's physical geometry.
