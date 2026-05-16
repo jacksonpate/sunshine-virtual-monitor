@@ -58,6 +58,16 @@ function AllPhys-Active {
   return $true
 }
 
+# Find the *real* running watcher process(es). The actual cmdline is
+#   powershell.exe ... -File "<...>\roam\roam-watcher.ps1"
+# so require -File + the roam\roam-watcher.ps1 path and exclude the current
+# process. (A bare 'roam-watcher.ps1' substring match - the upstream predicate
+# - also matches diagnostics/one-liners that merely mention the filename.)
+function Get-WatcherProcs {
+  Get-CimInstance Win32_Process -Filter "Name='powershell.exe'" -ErrorAction SilentlyContinue |
+    Where-Object { $_.ProcessId -ne $PID -and $_.CommandLine -match '-File\s+"?[^"]*roam[\\/]roam-watcher\.ps1' }
+}
+
 Add-Type @"
 using System; using System.Runtime.InteropServices;
 public static class RoamCCD { [DllImport("user32.dll")] public static extern int SetDisplayConfig(uint a,IntPtr b,uint c,IntPtr d,uint f); }

@@ -16,6 +16,7 @@ $ErrorActionPreference='Continue'
 $roam = 'C:\jacks\AI\sunshine-virtual-monitor\roam'
 $res  = "$roam\install-result.txt"
 function L($m){ "{0}  {1}" -f (Get-Date -Format HH:mm:ss),$m | Tee-Object -FilePath $res -Append }
+if (Test-Path "$PSScriptRoot\roam-lib.ps1") { . "$PSScriptRoot\roam-lib.ps1" }
 "=== ROAM-INSTALL START $(Get-Date -Format o) ===" | Set-Content $res
 
 $me   = "$env:USERDOMAIN\$env:USERNAME"
@@ -47,8 +48,7 @@ try {
 
 # --- 3. optionally start now (off by default - sleep-mode safe) ---
 if ($Start) {
-  Get-CimInstance Win32_Process -Filter "Name='powershell.exe'" -EA SilentlyContinue |
-    Where-Object { $_.CommandLine -match 'roam-watcher\.ps1' } | ForEach-Object { try{Stop-Process -Id $_.ProcessId -Force}catch{} }
+  if (Get-Command Get-WatcherProcs -EA SilentlyContinue) { Get-WatcherProcs | ForEach-Object { try{Stop-Process -Id $_.ProcessId -Force}catch{} } }
   Start-Sleep 1
   try { Start-ScheduledTask -TaskName $task; L 'task started' }
   catch {
@@ -56,7 +56,8 @@ if ($Start) {
     Start-Process powershell.exe -ArgumentList "-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File `"$roam\roam-watcher.ps1`"" -WindowStyle Hidden
   }
   Start-Sleep 5
-  $running = [bool](Get-CimInstance Win32_Process -Filter "Name='powershell.exe'" -EA SilentlyContinue | Where-Object { $_.CommandLine -match 'roam-watcher\.ps1' })
+  $wp = if (Get-Command Get-WatcherProcs -EA SilentlyContinue) { Get-WatcherProcs }
+  $running = [bool]$wp
   L ("RESULT=" + $(if($running){'OK - watcher live. Test iPad corners.'}else{'NOT RUNNING - see roam.log'}))
 } else {
   L 'RESULT=ARMED (not started - will come up at next logon; run start-roam-watcher.ps1 when at the desk & streaming)'

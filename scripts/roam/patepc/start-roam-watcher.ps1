@@ -3,8 +3,8 @@
 # rebuilds display topology). Mutex-guarded, so it is safe if one is already up.
 $ErrorActionPreference='Continue'
 $roam = 'C:\jacks\AI\sunshine-virtual-monitor\roam'
-$already = Get-CimInstance Win32_Process -Filter "Name='powershell.exe'" -EA SilentlyContinue |
-  Where-Object { $_.CommandLine -match 'roam-watcher\.ps1' }
+. "$PSScriptRoot\roam-lib.ps1"
+$already = Get-WatcherProcs
 if ($already) { "watcher already running (pid $($already.ProcessId))"; return }
 try { Start-ScheduledTask -TaskName RoamDisplayWatcher -EA Stop; "started via scheduled task" }
 catch {
@@ -12,6 +12,6 @@ catch {
   "started directly (scheduled task unavailable: $($_.Exception.Message))"
 }
 Start-Sleep 5
-$p = Get-CimInstance Win32_Process -Filter "Name='powershell.exe'" -EA SilentlyContinue | Where-Object { $_.CommandLine -match 'roam-watcher\.ps1' }
+$p = Get-WatcherProcs
 ("watcher running=" + $(if($p){"yes pid $($p.ProcessId)"}else{'NO - see roam.log'}))
 if (Test-Path "$roam\roam.log") { '--- roam.log tail ---'; Get-Content "$roam\roam.log" -Tail 6 }
